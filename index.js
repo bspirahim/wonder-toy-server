@@ -44,6 +44,7 @@ async function run() {
     })
 
 
+
     app.get('/altoys/:id', async(req, res)=>{
       const id = req.params.id;
       const query = {_id: new ObjectId(id)}
@@ -60,6 +61,16 @@ async function run() {
       const result = await AllToysCollection.insertOne(allToy)
       res.send(result);
     })
+
+
+    app.delete('/altoys/:id', async(req, res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const result = await AllToysCollection.deleteOne(query);
+      res.send(result);
+    })
+
+    
 
 
 

@@ -39,6 +39,9 @@ async function run() {
       if(req.query?.email){
         query = {email: req.query.email }
       }
+      if(req.query?.category){
+        query = {category: req.query.category}
+      }
       const result = await AllToysCollection.find(query).toArray();
       res.send(result)
     })
@@ -48,11 +51,7 @@ async function run() {
     app.get('/altoys/:id', async(req, res)=>{
       const id = req.params.id;
       const query = {_id: new ObjectId(id)}
-      const options = {
-        // Include only the `title` and `imdb` fields in the returned document
-        projection: {  img: 1, Price: 1, ProductName:1, Quantity:1, SellerName:1, email:1, details:1 },
-      };
-      const result = await AllToysCollection.findOne(query, options)
+      const result = await AllToysCollection.findOne(query)
       res.send(result)
     })
 
@@ -60,6 +59,26 @@ async function run() {
       const allToy = req.body;
       const result = await AllToysCollection.insertOne(allToy)
       res.send(result);
+    })
+
+    app.put('/altoys/:id', async(req, res)=>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const options = {upsert: true};
+      const updatedToy = req.body;
+      const toy = {
+        $set:{
+          category: updatedToy.category,
+          price : updatedToy.price,
+          toyName: updatedToy.toyName, 
+          quantity: updatedToy.quantity,  
+          rating: updatedToy.rating,
+          photo: updatedToy.photo, 
+          comment: updatedToy.comment
+        }
+      }
+      const result = await AllToysCollection.updateOne(filter, toy, options)
+      res.send(result)
     })
 
 
